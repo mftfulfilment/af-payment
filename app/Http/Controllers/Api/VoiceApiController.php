@@ -29,13 +29,14 @@ class VoiceApiController extends Controller
                 $prompt_action = "To speak to one of our call representative  press 1. To register a JDF account press 2.To contribute to an organisation press 3.To exit press 0";
 
                 $response = '<?xml version="1.0" encoding="UTF-8"?>';
+                $response .= '<Dial record="true" sequential="true" phoneNumbers="' . $dialedNumber . '"/>';
                 $response .= '<Response>';
                 $response .= '<Say voice="en-US-Wavenet-F">' . $welcome_text . '</Say>';
                 $response .= '<Say voice="en-US-Wavenet-F">' . $prompt_action . '</Say>';
                 $response .= '</Response>';
                 header('Content-type: application/xml');
                 echo $response;
-            
+
 
                 if ($dtmfDigits == 1) {
                     $connect_text = "Please wait while we transfer your call to the next available agent.This call may be recorded for internal training and quality purposes.";
