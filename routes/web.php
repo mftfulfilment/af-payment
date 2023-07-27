@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AfricasTalkingGateway;
 use App\Http\Controllers\MpesaController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*

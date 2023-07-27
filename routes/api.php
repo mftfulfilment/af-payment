@@ -18,13 +18,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
  * Voice service
  */
 
- Route::post('v1/handle-callback',[VoiceApiController::class, 'handleCallBack']);
- Route::post('v1/handle-event',[VoiceApiController::class, 'handleEvent']);
+ Route::any('v1/handle-callback',[VoiceApiController::class, 'handleCallBack']);
+ Route::any('v1/handle-event',[VoiceApiController::class, 'handleEvent']);
 
 
- Route::post('v1/transfer-call',[VoiceApiController::class, 'transferCall']);
- Route::post('v1/dequeue-call',[VoiceApiController::class, 'dequeueCall']);
- Route::post('v1/generate-token',[VoiceApiController::class, 'generateToken']);
+ Route::any('v1/transfer-call',[VoiceApiController::class, 'transferCall']);
+ Route::any('v1/dequeue-call',[VoiceApiController::class, 'dequeueCall']);
+ Route::any('v1/generate-token',[VoiceApiController::class, 'generateToken']);
 
 Route::any('stk_push', [MpesaController::class, 'stk_push']);
 Route::any('callback', [MpesaController::class, 'callback']);
