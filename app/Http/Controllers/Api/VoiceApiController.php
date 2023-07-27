@@ -13,28 +13,73 @@ class VoiceApiController extends Controller
     public function handleCallback(Request $request)
     {
 
-
         $isActive = $request->isActive;
-        $sessionId = $request->sessionId;
         $direction = $request->direction;
         $callerNumber = $request->callerNumber;
         $destinationNumber = $request->destinationNumber;
+        $dialedNumber = '254110666140';
+        $dtmfDigits = $request->dtmfDigits;
+
 
         if ($isActive == 1) {
+            if ($direction == 'Inbound') {
 
-            $say_welcome_text = "Welcome to JDF Organisation Limited.Please wait while we transfer your call to the next available agent.This call may be recorded for internal training and quality purposes.";
+                $welcome_text = "Welcome to JDF Organisation Limited.Please wait while we transfer your call to the next available agent.This call may be recorded for internal training and quality purposes.";
+                $promp_action = "To speak to an agent press 1. To register on JDF account press 2. To exit press 0";
+                $goodbye_text = "Thank you for calling JDF organisation.Until next time it is a Goodbye";
 
-            $response = '<?xml version="1.0" encoding="UTF-8"?>';
-            $response .= '<Response>';
-            $response .= '<Say voice="en-US-Wavenet-F">' . $say_welcome_text . '</Say>';
-            $response .= '<Dial record="true" sequential="true" phoneNumbers="' . +254110666140 . '" />';
-            $response .= '<Record trimSilence="true"></Record>';
-            $response .= '</Response>';
+                $response = '<?xml version="1.0" encoding="UTF-8"?>';
+                $response .= '<Response>';
+                $response .= '<Say voice="en-US-Wavenet-F">' . $welcome_text . '</Say>';
+                $response .= '<Say voice="en-US-Wavenet-F">' . $promp_action . '</Say>';
 
-            // Print the response onto the page so that our gateway can read it
-            header('Content-type: application/xml');
-            echo $response;
-            exit();
+                $response .= '<Record trimSilence="true"></Record>';
+                $response .= '</Response>';
+                header('Content-type: application/xml');
+                echo $response;
+                exit();
+
+
+                if($dtmfDigits == 1){
+                    $response .= '<Dial record="true" sequential="true" phoneNumbers="' . $dialedNumber . '"/>';
+
+                }
+
+               else if($dtmfDigits == 2){
+                    $response = '<?xml version="1.0" encoding="UTF-8"?>';
+                    $response .= '<Response>';
+                    $response .= '<Say voice="en-US-Wavenet-F">' . $promp_action . '</Say>';
+                    $response .= '<Dial record="true" sequential="true" phoneNumbers="' . $dialedNumber . '"/>';
+                    $response .= '<Record trimSilence="true"></Record>';
+                    $response .= '</Response>';
+                    header('Content-type: application/xml');
+                    echo $response;
+                    exit();
+
+                }
+
+                else{
+                    $response = '<?xml version="1.0" encoding="UTF-8"?>';
+                    $response .= '<Response>';
+                    $response .= '<Say voice="en-US-Wavenet-F">' . $goodbye_text . '</Say>';
+                    $response .= '</Response>';
+                    header('Content-type: application/xml');
+                    echo $response;
+                    exit();
+                }
+
+            } else {
+
+                $response = '<?xml version="1.0" encoding="UTF-8"?>';
+                $response .= '<Response>';
+                $response .= '<Dial record="true" sequential="true" phoneNumbers="' . $callerNumber . '"/>';
+                $response .= '</Response>';
+
+                header('Content-type: text/plain');
+                echo $response;
+                exit();
+
+            }
 
         } else {
 
