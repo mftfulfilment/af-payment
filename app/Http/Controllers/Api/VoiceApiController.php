@@ -35,7 +35,7 @@ class VoiceApiController extends Controller
                 $response .= '</Response>';
                 header('Content-type: application/xml');
                 echo $response;
-                exit();
+            
 
                 if ($dtmfDigits == 1) {
                     $connect_text = "Please wait while we transfer your call to the next available agent.This call may be recorded for internal training and quality purposes.";
