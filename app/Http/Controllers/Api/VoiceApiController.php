@@ -30,15 +30,8 @@ class VoiceApiController extends Controller
                 $response .= '<Response>';
                 $response .= '<Say voice="en-US-Wavenet-F">' . $welcome_text . '</Say>';
                 $response .= '<Say voice="en-US-Wavenet-F">' . $promp_action . '</Say>';
-
-                $response .= '<Record trimSilence="true"></Record>';
-                $response .= '</Response>';
-                header('Content-type: application/xml');
-                echo $response;
-
                 $connect_text = "Please wait while we transfer your call to the next available agent.This call may be recorded for internal training and quality purposes.";
-                $response = '<?xml version="1.0" encoding="UTF-8"?>';
-                $response .= '<Response>';
+
                 $response .= '<Say voice="en-US-Wavenet-F">' . $connect_text . '</Say>';
                 $response .= '<Dial record="true" sequential="true" phoneNumbers="' . $dialedNumber . '"/>';
                 $response .= '</Response>';
