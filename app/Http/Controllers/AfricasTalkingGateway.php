@@ -465,7 +465,8 @@ class AfricasTalkingGateway extends Controller
         // $text_1 = str_replace("'", '');
 
         $text_1 = explode('*', $text);
-
+        $payment_method = '';
+        $organization = '';
         Log::debug('text_1');
         Log::debug($text_1);
         Log::debug('text_1');
@@ -495,46 +496,73 @@ class AfricasTalkingGateway extends Controller
             // User is registered, show donation options
             if ($text == "") {
                 // This is the first request. Note how we start the response with CON
+                $response = "CON Choose payment Method: \n";
+                $response .= "1. M-pesa A \n";
+                $response .= "2. Paypal";
+                // Add more organizations as needed
+            } else if ($text == "1") {
+                $payment_method = 'Mpesa';
+                // This is the first request. Note how we start the response with CON
                 $response = "CON Choose an organization to donate to: \n";
                 $response .= "1. Organization A \n";
                 $response .= "2. Organization B \n";
                 // Add more organizations as needed
-            } else if ($text == "1") {
-                // User selected an organization, prompt for donation amount
-                $organization = ($text == '1') ? 'Organization A' : 'Organization B';
-                // Add more organizations as needed
-
-                $response = "CON Enter the donation amount for {$organization}:";
             } else if ($text == "2") {
+                $payment_method = 'Paypal';
+                // This is the first request. Note how we start the response with CON
+                $response = "CON Choose an organization to donate to: \n";
+                $response .= "1. Organization A \n";
+                $response .= "2. Organization B \n";
+                // Add more organizations as needed
+            } else if ($text == "1*1") {
                 // User selected an organization, prompt for donation amount
                 $organization = 'Organization A';
                 // Add more organizations as needed
 
                 $response = "CON Enter the donation amount for {$organization}:";
-            }else if ($text == "3") {
+            } else if ($text == "1*2") {
                 // User selected an organization, prompt for donation amount
-                $organization = 'Organization C';
+                $organization = 'Organization B';
                 // Add more organizations as needed
 
                 $response = "CON Enter the donation amount for {$organization}:";
-            }else if ('1*' . $text_1[1]){
-                $donationAmount = $text_1[1];
-                $response = "END Thank you for donating {$donationAmount}! You will receive an M-pesa STK push shortly";
+            } else if ($text == "2*1") {
+                // User selected an organization, prompt for donation amount
+                $organization = 'Organization A';
+                // Add more organizations as needed
+
+                $response = "CON Enter the donation amount for {$organization}:";
+            } else if ($text == "2*2") {
+                // User selected an organization, prompt for donation amount
+                $organization = 'Organization B';
+                // Add more organizations as needed
+
+                $response = "CON Enter the donation amount for {$organization}:";
+            } else if ('1*1*' . $text_1[2]) {
+                $donationAmount = $text_1[2];
+                $response = "END Thank you for donating {$donationAmount}! You will receive a message with payment details shortly";
 
                 // $paypal = new Paypal;
-                $payment_link = $this->paypal($donationAmount);
-                $message = 'Thank you for donating ' . $donationAmount . '! Payment link: ' . $payment_link;
-                // $message = 'Thank you for donating ' . $donationAmount . '! You will receive an M-pesa STK push shortly';
+
+                if ($text == '1*1*' . $text_1[2]) {
+                    // Mpesa
+                    $message = 'Thank you for donating ' . $donationAmount . '! You will receive an M-pesa STK push shortly';
+
+                    $mpesa = new MpesaController;
+                    $mpesa->stk_push($phoneNumber);
+                } else if ($text == '2*1*' . $text_1[2]) {
+                    $payment_link = $this->paypal($donationAmount);
+                    $message = 'Thank you for donating ' . $donationAmount . '! Payment link: ' . $payment_link;
+                }
+
+
+
 
 
                 $this->sendMessage($phoneNumber, $message);
 
 
-
-                // $mpesa = new MpesaController;
-                // $mpesa->stk_push($phoneNumber);
             }
-
         }
 
         // Echo the response back to the API
