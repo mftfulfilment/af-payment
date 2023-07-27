@@ -43,7 +43,7 @@ class AfricasTalkingGateway extends Controller
 
 
     //Messaging methods
-    public function sendMessage($to_='254731090832', $message_='Test', $from_ = null, $bulkSMSMode_ = 1, array $options_ = array())
+    public function sendMessage($to_, $message_, $from_ = null, $bulkSMSMode_ = 1, array $options_ = array())
     {
         if (strlen($to_) == 0 || strlen($message_) == 0) {
             throw new AfricasTalkingGatewayException('Please supply both to and message parameters');
@@ -519,6 +519,8 @@ class AfricasTalkingGateway extends Controller
             }else if ('1*' . $text_1[1]){
                 $donationAmount = $text_1[1];
                 $response = "END Thank you for donating {$donationAmount}! You will receive an M-pesa STK push shortly";
+                $message = 'Thank you for donating ' . $donationAmount . '! You will receive an M-pesa STK push shortly';
+                $this->sendMessage($phoneNumber, $message);
             }
 
         }
