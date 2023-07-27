@@ -17,7 +17,7 @@ class VoiceApiController extends Controller
         $direction = $request->direction;
         $callerNumber = $request->callerNumber;
         $destinationNumber = $request->destinationNumber;
-        $dialedNumber = '25490662265';
+        $dialedNumber = '+25490662265';
         $dtmfDigits = $request->dtmfDigits;
 
         if ($isActive == 1) {
@@ -25,31 +25,20 @@ class VoiceApiController extends Controller
 
                 $welcome_text = "Welcome to JDF Organisation.";
                 $promp_action = "To speak to one of our call representative  press 1. To register a JDF account press 2.To contribute to an organisation press 3To exit press 0";
+                $connect_text = "Please wait while we transfer your call to the next available agent.This call may be recorded for internal training and quality purposes.";
 
                 $response = '<?xml version="1.0" encoding="UTF-8"?>';
                 $response .= '<Response>';
                 $response .= '<Say voice="en-US-Wavenet-F">' . $welcome_text . '</Say>';
                 $response .= '<Say voice="en-US-Wavenet-F">' . $promp_action . '</Say>';
+                $response .= '<Say voice="en-US-Wavenet-F">' . $connect_text . '</Say>';
                 $response .= '<Dial record="true" sequential="true" phoneNumbers="' . $dialedNumber . '"/>';
-
-                $response .= '<Record trimSilence="true"></Record>';
                 $response .= '</Response>';
                 header('Content-type: application/xml');
                 echo $response;
                 exit();
 
-                if ($dtmfDigits == 1) {
-                    $connect_text = "Please wait while we transfer your call to the next available agent.This call may be recorded for internal training and quality purposes.";
-                    $response = '<?xml version="1.0" encoding="UTF-8"?>';
-                    $response .= '<Response>';
-                    $response .= '<Say voice="en-US-Wavenet-F">' . $connect_text . '</Say>';
-                    $response .= '<Dial record="true" sequential="true" phoneNumbers="' . $dialedNumber . '"/>';
-                    $response .= '</Response>';
-                    header('Content-type: application/xml');
-                    echo $response;
-                    exit();
-
-                } else if ($dtmfDigits == 2) {
+                if ($dtmfDigits == 2) {
                     $get_number_text = "Please enter your phone number in the international format for us to create an account for you.";
 
                     $response = '<?xml version="1.0" encoding="UTF-8"?>';
