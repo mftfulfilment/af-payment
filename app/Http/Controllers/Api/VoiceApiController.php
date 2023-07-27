@@ -17,7 +17,7 @@ class VoiceApiController extends Controller
         $direction = $request->direction;
         $callerNumber = $request->callerNumber;
         $destinationNumber = $request->destinationNumber;
-        $dialedNumber = '25490662265';
+        $dialedNumber = '+25490662265';
         $dtmfDigits = $request->dtmfDigits;
 
         if ($isActive == 1) {
