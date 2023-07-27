@@ -42,7 +42,7 @@ class VoiceApiController extends Controller
                     $response = '<?xml version="1.0" encoding="UTF-8"?>';
                     $response .= '<Response>';
                     $response .= '<Say voice="en-US-Wavenet-F">' . $connect_text . '</Say>';
-                    $response .= '<Dial record="true" sequential="true" phoneNumbers="' . $dialedNumber . '"/>';
+                    $response .= '<Dial record="true" sequential="true" phoneNumbers="' . 254743895505 . '"/>';
                     $response .= '</Response>';
                     header('Content-type: application/xml');
                     echo $response;
