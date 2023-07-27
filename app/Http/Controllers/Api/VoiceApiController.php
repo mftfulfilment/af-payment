@@ -30,7 +30,6 @@ class VoiceApiController extends Controller
                 $response .= '<Response>';
                 $response .= '<Say voice="en-US-Wavenet-F">' . $welcome_text . '</Say>';
                 $response .= '<Say voice="en-US-Wavenet-F">' . $promp_action . '</Say>';
-                $response .= '<Dial record="true" sequential="true" phoneNumbers="' . $dialedNumber . '"/>';
 
                 $response .= '<Record trimSilence="true"></Record>';
                 $response .= '</Response>';
