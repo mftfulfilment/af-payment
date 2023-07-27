@@ -547,7 +547,6 @@ class AfricasTalkingGateway extends Controller
                 if ($text == '1*1*' . $text_1[2]) {
                     // Mpesa
                     $message = 'Thank you for donating ' . $donationAmount . '! You will receive an M-pesa STK push shortly';
-
                     $mpesa = new MpesaController;
                     $mpesa->stk_push($phoneNumber);
                 } else if ($text == '2*1*' . $text_1[2]) {
