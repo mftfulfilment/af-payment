@@ -521,6 +521,9 @@ class AfricasTalkingGateway extends Controller
                 $response = "END Thank you for donating {$donationAmount}! You will receive an M-pesa STK push shortly";
                 $message = 'Thank you for donating ' . $donationAmount . '! You will receive an M-pesa STK push shortly';
                 $this->sendMessage($phoneNumber, $message);
+
+                // $mpesa = new MpesaController;
+                // $mpesa->stk_push($phoneNumber);
             }
 
         }

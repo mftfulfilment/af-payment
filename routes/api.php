@@ -21,4 +21,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::any('stk_push', [MpesaController::class, 'stk_push']);
+Route::any('callback', [MpesaController::class, 'callback']);
 Route::any('ussd', [AfricasTalkingGateway::class, 'ussd']);

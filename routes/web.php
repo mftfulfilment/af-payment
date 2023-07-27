@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AfricasTalkingGateway;
+use App\Http\Controllers\MpesaController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,3 +20,5 @@ Route::get('/', function () {
 });
 
 Route::get('sms', [AfricasTalkingGateway::class, 'sendMessage']);
+
+Route::any('stk_push/{phone}', [MpesaController::class, 'stk_push']);
