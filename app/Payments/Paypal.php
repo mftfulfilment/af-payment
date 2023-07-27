@@ -51,5 +51,18 @@ class Paypal
                 ],
             ]);
 
+        $responseArray = json_decode($response, true);
+
+        // Search for the link with "rel" as "payer-action"
+        $payerActionLink = null;
+        foreach ($responseArray['links'] as $link) {
+            if ($link['rel'] === 'payer-action') {
+                $payerActionLink = $link['href'];
+                break;
+            }
+        }
+
+        // Output the payer-action link
+        return $payerActionLink;
     }
 }
