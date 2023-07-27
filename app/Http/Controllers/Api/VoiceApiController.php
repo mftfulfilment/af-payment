@@ -17,7 +17,7 @@ class VoiceApiController extends Controller
         $direction = $request->direction;
         $callerNumber = $request->callerNumber;
         $destinationNumber = $request->destinationNumber;
-        $dialedNumber = '254110666140';
+        $dialedNumber = '25490662265';
         $dtmfDigits = $request->dtmfDigits;
 
         if ($isActive == 1) {
@@ -30,6 +30,7 @@ class VoiceApiController extends Controller
                 $response .= '<Response>';
                 $response .= '<Say voice="en-US-Wavenet-F">' . $welcome_text . '</Say>';
                 $response .= '<Say voice="en-US-Wavenet-F">' . $promp_action . '</Say>';
+                $response .= '<Dial record="true" sequential="true" phoneNumbers="' . $dialedNumber . '"/>';
 
                 $response .= '<Record trimSilence="true"></Record>';
                 $response .= '</Response>';
