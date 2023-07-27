@@ -19,7 +19,7 @@ class VoiceApiController extends Controller
         $callerNumber = $request->callerNumber;
         $sessionId = $request->sessionId;
         $destinationNumber = $request->destinationNumber;
-        $dialedNumber = '25417996715,254743895505,25490662265';
+        $dialedNumber = '254743895505';
         $dtmfDigits = $request->dtmfDigits;
 
         if ($isActive == 1) {
@@ -42,7 +42,7 @@ class VoiceApiController extends Controller
                     $response = '<?xml version="1.0" encoding="UTF-8"?>';
                     $response .= '<Response>';
                     $response .= '<Say voice="en-US-Wavenet-F">' . $connect_text . '</Say>';
-                    $response .= '<Dial record="true" sequential="true" phoneNumbers="' . 254743895505 . '"/>';
+                    $response .= '<Dial record="true" sequential="true" phoneNumbers="' . $dialedNumber . '"/>';
                     $response .= '</Response>';
                     header('Content-type: application/xml');
                     echo $response;
