@@ -140,35 +140,135 @@ class VoiceApiController extends Controller
 
     }
 
-    public function handleEvent(Request $request)
-    {
-        $event = $request->input('eventType');
+    public function handleEvent(Request $request){
 
 
-        if ($event === 'DtmfReceived') {
-            $dtmfDigits = $request->input('dtmfDigits');
+        $callSessionState = $request->callSessionState;
+        if($callSessionState == 'Transferred' || $callSessionState == 'TransferCompleted'){
 
+            $callTransferredToNumber = $request->callTransferredToNumber;
+            $sessionId = $request->sessionId;
 
-            if ($dtmfDigits === '1') {
+            $call_history = DB::table('call_histories')
+                ->where('isActive', 1)
+                ->where('sessionId', $sessionId)
+                ->where('deleted_at', null)
+                ->first();
 
-                $dialedNumber = '254110666140';
-                $connect_text = "Please wait while we transfer your call to the next available agent. This call may be recorded for internal training and quality purposes.";
+            if($call_history){
 
-                $response = '<?xml version="1.0" encoding="UTF-8"?>';
-                $response .= '<Response>';
-                $response .= '<Say voice="en-US-Wavenet-F">' . $connect_text . '</Say>';
-                $response .= '<Dial record="true" sequential="true" phoneNumbers="' . $dialedNumber . '"/>';
-                $response .= '</Response>';
-                header('Content-type: application/xml');
-                echo $response;
-                exit();
+                // Update current agent
+                $update_call_agent = DB::table('call_agents')
+                    ->where('admin_id', $call_history->adminId)
+                    ->update([
+                        'status' => 'busy',
+                        'sessionId' => $sessionId,
+                        'updated_at' => date('Y-m-d H:i:s'),
+                    ]);
+
+                $call_agent = DB::table('call_agents')
+                    ->where('client_name', substr($callTransferredToNumber, strpos($callTransferredToNumber, ".") + 1))
+                    ->where('deleted_at', null)
+                    ->first();
+
+                if($call_agent){
+
+                    // Update next agent
+                    $update_call_agent = DB::table('call_agents')
+                        ->where('id', $call_agent->id)
+                        ->update([
+                            'status' => 'busy',
+                            'sessionId' => $sessionId,
+                            'updated_at' => date('Y-m-d H:i:s'),
+                        ]);
+                }
             }
 
+        }elseif ($callSessionState == 'Active'){
 
+            if($request->has('callTransferState')){
+
+                $callTransferState = $request->callTransferState;
+                if($callTransferState == 'CallerHangup'){
+
+                    $sessionId = $request->sessionId;
+                    $call_history = DB::table('call_histories')
+                        ->where('isActive', 1)
+                        ->where('sessionId', $sessionId)
+                        ->where('deleted_at', null)
+                        ->first();
+
+                    if($call_history){
+
+                        // Update current agent
+                        $update_call_agent = DB::table('call_agents')
+                            ->where('admin_id', $call_history->adminId)
+                            ->update([
+                                'status' => 'available',
+                                'sessionId' => $sessionId,
+                                'updated_at' => date('Y-m-d H:i:s'),
+                            ]);
+
+                        if($update_call_agent){
+
+                            $call_agent = DB::table('call_agents')
+                                ->where('sessionId', $sessionId)
+                                ->where('deleted_at', null)
+                                ->first();
+
+                            if($call_agent){
+
+                                $update_call_history = DB::table('call_histories')
+                                    ->where('id', $call_history->id)
+                                    ->update([
+                                        'adminId' => $call_agent->admin_id,
+                                        'agentId' => $call_agent->client_name,
+                                        'nextCallStep' => 'in_progress',
+                                        'updated_at' => date('Y-m-d H:i:s')
+                                    ]);
+
+                            }
+                        }
+
+                    }
+
+                }elseif ($callTransferState == 'CalleeHangup'){
+
+                    $sessionId = $request->sessionId;
+                    $call_history = DB::table('call_histories')
+                        ->where('isActive', 1)
+                        ->where('sessionId', $sessionId)
+                        ->where('deleted_at', null)
+                        ->first();
+
+                    if($call_history){
+
+                        $call_agent = DB::table('call_agents')
+                            ->where('sessionId', $sessionId)
+                            ->where('deleted_at', null)
+                            ->first();
+
+                        if($call_agent){
+
+                            if($call_history->agentId != $call_agent->client_name){
+
+                                $update_call_agent = DB::table('call_agents')
+                                    ->where('id', $call_agent->id)
+                                    ->update([
+                                        'status' => 'available',
+                                        'sessionId' => '',
+                                        'updated_at' => date('Y-m-d H:i:s'),
+                                    ]);
+                            }
+
+                        }
+
+                    }
+
+                }
+            }
         }
 
-
-        return response()->json(['status' => 'success']);
     }
 
 
